@@ -1,41 +1,34 @@
 import React, { useState } from "react";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
+const Login = ({ loginHandler }) => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    console.log(username, password);
-    // Handle sign-up logic here
-    fetch("/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        console.log(json);
-      });
+  const handler = async () => {
+    try {
+      const response = await loginHandler(username, password);
+      const user = response.username;
+      // Redirect or handle successful login
+      alert(user);
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Handle login failure if needed
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-cyan-600 ">
       <div className="w-full max-w-md p-6 bg-white text-semibold rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handler}>
           <div class="relative mt-6">
             <input
               id="username"
               class="peer w-full border rounded-xl placeholder:text-transparent text-lg p-1"
               placeholder="Email"
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
             />
             <label
               for="email"
@@ -49,6 +42,9 @@ const Login = () => {
               id="password"
               class="peer w-full border rounded-xl placeholder:text-transparent text-lg p-1"
               placeholder="name"
+              onInput={(e) => {
+                setPassword(e.target.value);
+              }}
             />
             <label
               for="email"

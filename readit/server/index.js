@@ -25,60 +25,83 @@ app.get("/api", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const data = {
-    username: req.body.username,
-    password: req.body.password,
-  };
+  try {
+    const data = {
+      username: req.body.username,
+      password: req.body.password,
+    };
+    console.log(data);
+    const user = await collection.findOne({ username: data.username });
 
-  const user = await collection.findOne({ username: data.username });
-
-  if (!user) {
-    res.status(402).json({ message: "Username invalid" });
-    return;
-  } else {
-    const isPasswordValid = bcrypt.compare(data.password, user.password);
-
-    if (!isPasswordValid) {
-      res.status(402).json({ message: "Password invalid" });
-    } else {
-      //login successful
-      const token = jwt.sign(
-        { email: user.username, userId: user._id },
-        "your-secret-key",
-        { expiresIn: "1h" }
-      );
-      res.cookie("Login", token, {
-        httpOnly: false,
-        secure: true,
-        maxAge: 3600000,
-      });
-      res.json({
-        uid: user._id,
-        message: "Login Successful",
-      });
+    console.log(user);
+    if (!user) {
+      res.status(402).json({ message: "Username invalid" });
       return;
+    } else {
+      const isPassValid = await bcrypt.compare(user.password, data.password);
+
+      console.log(isPassValid);
+
+      if (data.password !== user.password) {
+        res.status(402).json({ message: "Password invalid" });
+      } else {
+        //login successful
+        const token = jwt.sign(
+          { username: user.username, userId: user._id },
+          "your-secret-key",
+          { expiresIn: "1h" }
+        );
+        res.cookie("Login", token, {
+          httpOnly: false,
+          secure: true,
+          maxAge: 3600000,
+        });
+        res.json({
+          username: user.username,
+          message: "Login Successful",
+          error: false,
+        });
+        console.log("Login successful");
+      }
     }
+  } catch (error) {
+    console.log("Internal server error");
+    res
+      .status(500)
+      .json({ message: "Internal server error occured", error: true });
   }
 
-  console.log(data);
+  // console.log(data);
 
-  const result = await collection.find({
-    username: data.username,
-    password: data.password,
-  });
+  // const result = await collection.find({
+  //   username: data.username,
+  //   password: data.password,
+  // });
 
-  res.json({ message: result });
+  // res.json({ message: result });
 });
 
 app.post("/signup", async (req, res) => {
-  const data = {
-    username: req.body.username,
-    password: req.body.password,
-  };
+  try {
+    const data = {
+      name: req.body.name,
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+    };
 
-  console.log(data);
+    const checkExisting = await collection.findOne({ username: data.username });
 
-  const result = await collection.insertMany([data]);
+    if (!checkExisting) {
+      console.log(data);
 
-  res.json({ message: result });
+      const result = await collection.insertMany([data]);
+
+      res.status(200).json({ message: result, error: false });
+    } else {
+      res.status(402).json({ error: true, message: "Username already exists" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error: true });
+  }
 });

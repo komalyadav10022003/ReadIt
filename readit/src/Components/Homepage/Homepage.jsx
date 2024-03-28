@@ -4,7 +4,7 @@ import Signup from "../Signup/Signup";
 import Login from "../Login/Login";
 import { useState } from "react";
 
-function Homepage() {
+function Homepage({ username, loginHandler }) {
   //if newUser then show signup else show login
   const [newUser, setNewUser] = useState(false);
 
@@ -38,7 +38,7 @@ function Homepage() {
           </div>
           <div className="mt-7 -mb-8 sm:-mb-11 lg:m-0 lg:relative">
             <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 lg:max-w-none lg:px-0">
-              {!newUser && <Login />}
+              {!newUser && <Login loginHandler={loginHandler} />}
               {newUser && <Signup />}
             </div>
           </div>

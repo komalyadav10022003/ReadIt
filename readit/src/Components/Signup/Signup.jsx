@@ -4,9 +4,50 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle sign-up logic here
+    //signup functionality
+    const name = document.getElementById("name").value;
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPass").value;
+
+    if (
+      name === "" ||
+      username === "" ||
+      email === "" ||
+      password === "" ||
+      confirmPassword === ""
+    ) {
+      alert("Please fill in all fields");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    await fetch("/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        username: username,
+        password: password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.error) {
+          alert(json.message);
+        } else {
+          alert("Signup successful");
+        }
+      });
   };
 
   return (
@@ -16,7 +57,34 @@ const Signup = () => {
         <form onSubmit={handleSubmit}>
           <div class="relative mt-6">
             <input
+              type="text"
+              id="name"
+              class="peer w-full border rounded-xl placeholder:text-transparent text-lg p-1"
+              placeholder="name"
+            />
+            <label
+              for="email"
+              class="absolute left-0 ml-2 mt-2 px-1 -translate-y-5 bg-white text-sm duration-100 ease-linear peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 ">
+              NAME
+            </label>
+          </div>
+          <div class="relative mt-6">
+            <input
+              type="text"
+              id="username"
+              class="peer w-full border rounded-xl placeholder:text-transparent text-lg p-1"
+              placeholder="name"
+            />
+            <label
+              for="email"
+              class="absolute left-0 ml-2 mt-2 px-1 -translate-y-5 bg-white text-sm duration-100 ease-linear peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 ">
+              USERNAME
+            </label>
+          </div>
+          <div class="relative mt-6">
+            <input
               type="email"
+              id="email"
               class="peer w-full border rounded-xl placeholder:text-transparent text-lg p-1"
               placeholder="name"
             />
@@ -29,6 +97,7 @@ const Signup = () => {
           <div class="relative mt-6">
             <input
               type="password"
+              id="password"
               class="peer w-full border rounded-xl placeholder:text-transparent text-lg p-1"
               placeholder="name"
             />
@@ -38,8 +107,21 @@ const Signup = () => {
               PASSWORD
             </label>
           </div>
+          <div class="relative mt-6">
+            <input
+              type="password"
+              id="confirmPass"
+              class="peer w-full border rounded-xl placeholder:text-transparent text-lg p-1"
+              placeholder="name"
+            />
+            <label
+              for="email"
+              class="absolute left-0 ml-2 mt-2 px-1 -translate-y-5 bg-white text-sm duration-100 ease-linear peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 ">
+              CONFIRM PASSWORD
+            </label>
+          </div>
           <button class="mt-10 w-full rounded-md bg-black py-2 px-5 text-white hover:bg-cyan-600 ">
-            Submit
+            Sign up
           </button>
         </form>
       </div>
