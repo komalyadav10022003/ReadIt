@@ -4,9 +4,10 @@ import { ReactDOM } from "react";
 import { useState, useEffect } from "react";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import "./App.css";
-import SideBar from "./Components/Sidebar/Sidebar";
+import Navbar from "./Components/Navbar/StickyNavbar";
 import Homepage from "./Components/Homepage/Homepage";
 import Home from "./Components/Home/Home";
+import CreateBook from "./Components/CreateBook/CreateBook";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -44,10 +45,10 @@ function App() {
           localStorage.setItem("username", user);
 
           // redirect user
+          setLoggedIn(true);
           window.location.href = "http://localhost:3000/home";
           // console.log("reached here")
 
-          setLoggedIn(true);
           return {
             username: username,
           };
@@ -58,17 +59,22 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      {isLoggedIn && <SideBar />}
-      <Routes>
-        <Route
-          path="/"
-          element={<Homepage loginHandler={loginHandler} username={username} />}
-        />
+    <>
+      <BrowserRouter>
+        {isLoggedIn && <Navbar />}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Homepage loginHandler={loginHandler} username={username} />
+            }
+          />
 
-        <Route path="/home" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/home" element={<Home />} />
+          <Route path="/create-book" element={<CreateBook />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

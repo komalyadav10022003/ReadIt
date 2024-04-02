@@ -1,12 +1,19 @@
 const express = require("express");
 const cors = require("cors");
-const collection = require("./mongodb");
+const [collection, book, genre] = require("./mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { createServer } = require("node:http");
+const { Server } = require("socket.io");
+const multer = require("multer");
 
 const PORT = process.env.PORT || 3001;
 
 const app = express();
+const server = createServer(app);
+
+const io = new Server(server);
+
 app.use(
   cors({
     origin: "http://127.0.0.1:3000/",
@@ -15,7 +22,7 @@ app.use(
 );
 app.use(express.json());
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
@@ -104,4 +111,42 @@ app.post("/signup", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error: true });
   }
+});
+
+// Search Route
+app.get("/search", async (req, res) => {
+  console.log(req.query);
+  const query = req.query.q; // Get search query from request query params
+  const type = req.query.type; // get the type of query from params
+
+  try {
+    if (type === "books") {
+      const books = await book.find({
+        $or: [
+          { title: new RegExp(query, "i") },
+          { author: new RegExp(query, "i") },
+        ],
+      });
+
+      console.log(books);
+      res.status(200).json(books);
+    }
+
+    if (type === "genre") {
+      const genres = await genre.find({ name: new RegExp(query, "i") });
+
+      console.log(genres);
+      res.status(200).json(genres);
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
 });

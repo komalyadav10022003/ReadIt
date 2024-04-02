@@ -29,6 +29,33 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
+const bookSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  author: {
+    type: String,
+    required: true,
+  },
+  genres: {
+    type: Array,
+    default: [""],
+    required: true,
+  },
+});
+
+const genreSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+});
+
+const genre = mongoose.model("genre", genreSchema);
+
+const book = mongoose.model("book", bookSchema);
+
 const collection = new mongoose.model("Users", UserSchema);
 
-module.exports = collection;
+module.exports = [collection, book, genre];
