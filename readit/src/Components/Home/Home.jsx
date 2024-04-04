@@ -10,7 +10,9 @@ function Home() {
 
   useEffect(() => {
     const userCookie = localStorage.getItem("username");
-    if (userCookie) {
+    console.log(userCookie);
+    if (userCookie === "") {
+      window.location = "http://localhost:3000/";
     }
   }, []);
 

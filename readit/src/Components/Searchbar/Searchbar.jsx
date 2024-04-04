@@ -2,7 +2,7 @@ import Select from "react-select";
 import React, { useState } from "react";
 import AsyncCreatableSelect from "react-select/async-creatable";
 
-function Searchbar({ searchFunction, value, setValue }) {
+function Searchbar({ searchFunction, value, setValue, isMulti }) {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   //   const [value, setValue] = useState();
@@ -38,7 +38,7 @@ function Searchbar({ searchFunction, value, setValue }) {
   const onInputChange = async (newValue, { action, prevInputValue }) => {
     if (action === "select-option") {
       setValue([...prevInputValue, newValue]);
-      console.log(value);
+      console.log("Value ", value);
     } else {
       console.log(newValue);
       const results = await searchFunction(newValue);
@@ -51,12 +51,30 @@ function Searchbar({ searchFunction, value, setValue }) {
     }
   };
 
+  const onKeyDown = (action) => {
+    console.log(action);
+    switch (action.key) {
+      case "Enter":
+      case "Tab":
+        setValue([...value, options[0]]);
+        break;
+    }
+  };
+
+  const handleOnChange = (newValue, { action, prevInputValue }) => {
+    setValue(newValue);
+    console.log("Value", value);
+  };
+
   return (
     <AsyncCreatableSelect
       isClearable
-      isMulti
+      isMulti={isMulti}
+      value={value}
       loadOptions={handleCreate}
       onInputChange={onInputChange}
+      onKeyDown={onKeyDown}
+      onChange={handleOnChange}
     />
   );
 }

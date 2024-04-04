@@ -19,6 +19,18 @@ const StickyNavbar = ({ chosenOption, setChosenOption }) => {
     );
   }, []);
 
+  const logout = async (event) => {
+    event.preventDefault();
+
+    await fetch("/logout")
+      .then((res) => res.json())
+      .then((json) => {
+        if (!json.error) {
+          window.location = "http://localhost:3000/";
+        }
+      });
+  };
+
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 text-lg">
       <Typography
@@ -41,14 +53,14 @@ const StickyNavbar = ({ chosenOption, setChosenOption }) => {
         variant="h5"
         className="mr-4 cursor-pointer py-1.5 font-medium pb-0 ">
         <Link
-          to="/books"
+          to="/create-book"
           className={
             "leading-4 " +
             (chosenOption === "books"
               ? " border-b-4 border-cyan-500 text-cyan-500"
               : "text-blue-gray-900")
           }>
-          Books
+          Create Book
         </Link>
       </Typography>
       <Typography
@@ -56,14 +68,14 @@ const StickyNavbar = ({ chosenOption, setChosenOption }) => {
         variant="h5"
         className="mr-4 cursor-pointer py-1.5 font-medium pb-0 ">
         <Link
-          to="/community"
+          to="/chatroom"
           className={
             "leading-4 " +
             (chosenOption === "community"
               ? " border-b-4 border-cyan-500 text-cyan-500"
               : "text-blue-gray-900")
           }>
-          Community
+          Book Search
         </Link>
       </Typography>
     </ul>
@@ -84,7 +96,8 @@ const StickyNavbar = ({ chosenOption, setChosenOption }) => {
             <Button
               variant="gradient"
               size="sm"
-              className="hidden lg:inline-block">
+              className="hidden lg:inline-block"
+              onClick={logout}>
               <span>Log out</span>
             </Button>
           </div>
@@ -127,11 +140,13 @@ const StickyNavbar = ({ chosenOption, setChosenOption }) => {
       <MobileNav open={openNav}>
         {navList}
         <div className="flex items-center gap-x-1">
-          <Button fullWidth variant="text" size="sm" className="">
-            <span>Log In</span>
-          </Button>
-          <Button fullWidth variant="gradient" size="sm" className="">
-            <span>Sign in</span>
+          <Button
+            fullWidth
+            variant="text"
+            size="sm"
+            className=""
+            onClick={logout}>
+            <span>Log Out</span>
           </Button>
         </div>
       </MobileNav>

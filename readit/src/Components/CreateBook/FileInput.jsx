@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { LuUploadCloud } from "react-icons/lu";
 import FileViewer from "./FileViewer";
 
-function FileInput({ file, setFile }) {
+function FileInput({ file, setFile, fileIndex }) {
   const [dragActive, setDragActive] = useState(false);
 
   //handle the drag and drop functionality
@@ -20,14 +20,16 @@ function FileInput({ file, setFile }) {
     event.preventDefault();
     setDragActive(false);
   };
-  const handleDrop = (event) => {
+  const handleDrop = async (event) => {
     event.preventDefault();
 
     console.log(event);
-    const { files } = event.dataTransfer;
+    const { files } = await event.dataTransfer;
+
+    console.log(files);
 
     if (files && files.length) {
-      setFile(URL.createObjectURL(files[0]));
+      setFile(URL.createObjectURL(files[fileIndex]));
     }
 
     if (event.type === "dragenter" || event.type === "dragover") {
@@ -40,6 +42,12 @@ function FileInput({ file, setFile }) {
 
   const invalidHandler = (event) => {
     console.log("Invalid input");
+  };
+
+  const handleInputChange = async (event) => {
+    event.preventDefault();
+    const file = await event.target.files[fileIndex];
+    if (file) setFile(URL.createObjectURL(event.target.files[fileIndex]));
   };
 
   return (
@@ -65,9 +73,8 @@ function FileInput({ file, setFile }) {
             className="hidden"
             accept="image/png, image/jpg, .pdf"
             size={10 * 1024 * 1024}
-            onChange={(event) =>
-              setFile(URL.createObjectURL(event.target.files[0]))
-            }
+            onChange={handleInputChange}
+            required={true}
           />
         </>
       )}

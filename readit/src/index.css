@@ -61,4 +61,9 @@ code {
   .font-poppins {
     font-family: "Poppins", sans-serif;
   }
+
+  input[type="file"]::-webkit-file-upload-button,
+  input[type="file"]::file-selector-button {
+    @apply text-white rounded-md bg-cyan-600 hover:bg-cyan-500 font-medium text-sm cursor-pointer border-0 py-2.5 pl-8 pr-4;
+  }
 }

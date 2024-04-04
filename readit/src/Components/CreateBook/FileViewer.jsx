@@ -1,5 +1,5 @@
 import React from "react";
-import { ImCross } from "react-icons/im";
+import { Document, Page } from "react-pdf";
 
 function FileViewer({ file, setFile }) {
   console.log(file["name"]);

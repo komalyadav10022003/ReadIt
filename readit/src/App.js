@@ -8,6 +8,9 @@ import Navbar from "./Components/Navbar/StickyNavbar";
 import Homepage from "./Components/Homepage/Homepage";
 import Home from "./Components/Home/Home";
 import CreateBook from "./Components/CreateBook/CreateBook";
+import Book from "./Components/Book/Book";
+import Chatroom from "./Components/Chatroom/Chatroom";
+import ReadingPage from "./Components/Read/ReadingPage";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -72,6 +75,19 @@ function App() {
 
           <Route path="/home" element={<Home />} />
           <Route path="/create-book" element={<CreateBook />} />
+          <Route
+            path="/book"
+            element={
+              <Book
+                title="Crime and Punishment"
+                author="Fyodor Dostoyevsky"
+                genre={["Philosophy", "Classics", "Crime"]}
+                onClick={() => console.log("Clickced")}
+              />
+            }
+          />
+          <Route path="chatroom" element={<Chatroom />} />
+          <Route path="community" element={<ReadingPage />} />
         </Routes>
       </BrowserRouter>
     </>
