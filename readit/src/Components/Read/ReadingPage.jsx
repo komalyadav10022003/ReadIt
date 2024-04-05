@@ -5,8 +5,44 @@ import axios from "axios";
 import Book from "../Book/Book";
 import { saveAs } from "file-saver";
 import StickyNavbar from "../Navbar/StickyNavbar";
+import Recommender from "../Recommender/Recommender";
 
 const ReadingPage = () => {
+  //demo data
+  const dummyBooks = [
+    {
+      coverUrl: "https://cdn.thestorygraph.com/uyda3dzvjz2q12zu9ca8o5z52aee",
+      title: "The Great Gatsby",
+      author: "F. Scott Fitzgerald",
+      genre: "Classic",
+    },
+    {
+      coverUrl: "https://cdn.thestorygraph.com/nb76a3bdevkvca4csof6hb7lbeqj",
+      title: "To Kill a Mockingbird",
+      author: "Harper Lee",
+      genre: "Classic",
+    },
+    {
+      coverUrl: "https://cdn.thestorygraph.com/jztibk5xvnynw7mh7hfw0orhbzuh",
+      title: "1984",
+      author: "George Orwell",
+      genre: "Dystopian",
+    },
+    {
+      coverUrl: "https://cdn.thestorygraph.com/ohr6jiemvmagos6wad5oah75t4d9",
+      title: "Harry Potter and the Philosopher's Stone",
+      author: "J.K. Rowling",
+      genre: "Fantasy",
+    },
+    {
+      coverUrl: "https://cdn.thestorygraph.com/jztibk5xvnynw7mh7hfw0orhbzuh",
+      title: "Animal Farm",
+      author: "George Orwell",
+      genre: "Classic",
+    },
+    // Add more books as needed
+  ];
+
   const [searchQuery, setSearchQuery] = useState("");
   const [pdfData, setPdfData] = useState(null);
 
@@ -29,34 +65,37 @@ const ReadingPage = () => {
   };
 
   const handleSearch = async () => {
+    let newBooks = [];
     try {
       const response = await axios.get(`/search?q=${searchQuery}&type=books`);
       setPdfData(response.data);
       console.log(response.data);
 
       //empty the existing array
-      setBooks([]);
-      response.data.map(async (elem) => {
-        const newBookCover = await axios.get(
-          `/download/?filename=${
-            response.data[0].bookFile.split("\\")[1]
-          }&type=cover`
-        );
+      //   setBooks([]);
+
+      dummyBooks.map(async (elem) => {
+        // const newBookCover = await axios.get(
+        //   `/download/?filename=${
+        //     response.data[0].bookFile.split("\\")[1]
+        //   }&type=cover`
+        // );
 
         const newBook = (
           <Book
             title={elem.title}
             author={elem.author}
             genre={elem.genre}
-            bookCover={newBookCover}
+            bookCover={elem.coverUrl}
             onClick={(event) => {
-              bookDownload(event, elem.bookCover.split("\\")[1], elem.title);
+              //   bookDownload(event, elem.bookCover.split("\\")[1], elem.title);
+              console.log(event);
             }}
           />
         );
-
-        setBooks([...books, newBook]);
+        newBooks.push(newBook);
       });
+      setBooks(newBooks);
     } catch (error) {
       console.error("Error fetching PDF:", error);
     }
@@ -81,6 +120,7 @@ const ReadingPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2 p-4">
           {books}
         </div>
+        <Recommender />
       </div>
     </div>
   );
